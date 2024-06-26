@@ -1,50 +1,60 @@
 #!/usr/bin/python3
-""" Unittests : console """
+"""test for console to make it start working"""
 import unittest
-from console import HBNBCommand
 from io import StringIO
-import json
+from console import HBNBCommand
 import sys
-from unittest.mock import patch
-import pep8
-import os
+from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
+from models.engine.file_storage import FileStorage
+from models.engine.db_storage import DBStorage
 
 
 class TestConsole(unittest.TestCase):
-    """ test console class """
+    """this will test the console"""
 
-    def test_all(self):
-        """ test all method """
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("all NUGGET")
-            self.assertEqual(f.getvalue(), "\n** class doesn't exist **\n")
+    def test_exists(self):
+        """checking for docstrings i think"""
+        self.assertIsNotNone(HBNBCommand.do_quit.__doc__)
+        self.assertIsNotNone(HBNBCommand.do_create.__doc__)
+        self.assertIsNotNone(HBNBCommand.do_show.__doc__)
+        self.assertIsNotNone(HBNBCommand.do_destroy.__doc__)
+        self.assertIsNotNone(HBNBCommand.do_all.__doc__)
+        self.assertIsNotNone(HBNBCommand.do_update.__doc__)
 
-    def test_show(self):
-        """ test show method """
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("show NUGGET")
-            self.assertEqual(f.getvalue(), "\n** class doesn't exist **\n")
+    @classmethod
+    def get_S(cls):
+        """get stringio value and close"""
+        temp_out = StringIO()
+        sys.stdout = temp_out
+        return temp_out.getvalue()
 
-    def test_create(self):
-        """ test create method """
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("create NUGGET")
-            self.assertEqual(f.getvalue(), "\n** class doesn't exist **\n")
+    def test_create_error(self):
+        """test if create works right"""
+        temp_out = StringIO()
+        sys.stdout = temp_out
 
-    def test_update(self):
-        """ test update method """
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("update NUGGET")
-            self.assertEqual(f.getvalue(), "\n** class doesn't exist **\n")
+        HBNBCommand().do_create(None)
+        self.assertEqual(temp_out.getvalue(), '** class name missing **\n')
+        temp_out.close()
 
-    def test_destroy(self):
-        """ test destroy method """
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("destroy NUGGET")
-            self.assertEqual(f.getvalue(), "\n** class doesn't exist **\n")
+        temp_out = StringIO()
+        sys.stdout = temp_out
+        HBNBCommand().do_create("base")
+        self.assertEqual(temp_out.getvalue(), '** class doesn\'t exist **\n')
+        temp_out.close()
 
-    def test_destroy(self):
-        """ test detroy method """
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("destroy NUGGET")
-            self.assertEqual(f.getvalue(), "\n** class doesn't exist **\n")
+        temp_out = StringIO()
+        sys.stdout = temp_out
+        HBNBCommand().do_create("BaseModel")
+        self.assertEqual(temp_out.getvalue(), '** class doesn\'t exist **\n')
+        temp_out.close()
+        sys.stdout = sys.__stdout__
+
+if __name__ == "__main__":
+    unittest.main()

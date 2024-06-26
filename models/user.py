@@ -1,19 +1,31 @@
 #!/usr/bin/python3
-"""This module defines a class User"""
+"""
+    module containing user class
+    module containing user class
+"""
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine, Column, Integer, String
+from os import environ
+
+storage_engine = environ.get("HBNB_TYPE_STORAGE")
 
 
 class User(BaseModel, Base):
-    """This class defines a user by various attributes"""
-    __tablename__ = "users"
-    email = Column('email', String(128), nullable=False)
-    password = Column('password', String(128), nullable=False)
-    first_name = Column('first_name', String(128), nullable=True, default="NULL")
-    last_name = Column('last_name', String(128), nullable=True, default="NULL")
-    # backref may need to be back_populates?Below line commented out bc console
-    # would not run with it in. This line was implemented in Task 8
-    places = relationship("Place", cascade="delete", backref="user")
-    # Below line is commented out for caution and was added in Task 9
-    reviews = relationship("Review", cascade="delete", backref="user")
+    """
+        User class for the user
+        User class for the user
+    """
+    if (storage_engine == 'db'):
+        __tablename__ = "users"
+        email = Column(String(128), nullable=False)
+        password = Column(String(128), nullable=False)
+        first_name = Column(String(128), nullable=True)
+        last_name = Column(String(128), nullable=True)
+        places = relationship("Place", backref="user")
+        reviews = relationship("Review", backref="user")
+    else:
+        email = ""
+        password = ""
+        first_name = ""
+        last_name = ""
